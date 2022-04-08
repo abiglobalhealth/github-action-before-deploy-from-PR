@@ -1,0 +1,28 @@
+name: deploy-dev
+description: deploys dev environment
+branding: {color: blue, icon: box}
+outputs:
+  ref:
+    description: commit sha ref
+    value: ${{steps.get_PR_sha_ref.outputs.result}}
+runs:
+  using: composite
+  steps:
+    - name: acknowledge deploy comment
+      uses: actions/github-script@v6
+      with:
+        # language=js
+        script: |
+          const {owner, repo} = context.issue
+          const comment_id = context.payload.comment.id
+          github.rest.reactions.createForIssueComment({owner, repo, comment_id, content: "rocket"})
+
+    - name: get PR sha ref
+      id: get_PR_sha_ref
+      uses: actions/github-script@v6
+      with:
+        result-encoding: string
+        # language=js
+        script: |
+          const {owner, repo, number: pull_number } = context.issue
+          return (await github.rest.pulls.get({owner, repo, pull_number})).data.head.ref
