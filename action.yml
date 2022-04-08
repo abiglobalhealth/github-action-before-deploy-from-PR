@@ -1,4 +1,4 @@
-name: deploy-dev
+name: before-deploy-from-PR
 description: deploys dev environment
 branding: {color: blue, icon: box}
 outputs:
